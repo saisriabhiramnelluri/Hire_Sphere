@@ -1,0 +1,26 @@
+# Node dependencies
+node_modules/
+
+# Environment files
+
+.env.local
+.env.production
+
+# Uploads
+uploads/
+
+# Logs
+*.log
+
+# macOS system files
+.DS_Store
+
+# Test coverage
+coverage/
+
+# Build / production
+dist/
+build/
+
+# Ignore nested git repository
+antigravity-claude-proxy/
