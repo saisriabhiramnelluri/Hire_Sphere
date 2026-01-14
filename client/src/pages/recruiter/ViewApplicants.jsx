@@ -13,7 +13,8 @@ import {
   IoEye,
   IoDocumentText,
   IoSend,
-  IoVideocam
+  IoVideocam,
+  IoSparkles,
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -67,6 +68,10 @@ const ViewApplicants = () => {
   });
   const [offerLetterFile, setOfferLetterFile] = useState(null);
   const [sendingOffer, setSendingOffer] = useState(false);
+
+  // AI Resume Scoring state
+  const [aiScore, setAiScore] = useState(null);
+  const [loadingAiScore, setLoadingAiScore] = useState(false);
 
   // Generate dynamic status options based on drive's hiring pipeline
   const pipelineStatuses = useMemo(() => {
@@ -782,6 +787,111 @@ const ViewApplicants = () => {
                 </a>
               </div>
             )}
+
+            {/* AI Resume Score Section */}
+            <div className="pt-4 border-t border-primary-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-primary-600">AI Resume Score</h3>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<IoSparkles />}
+                  onClick={async () => {
+                    setLoadingAiScore(true);
+                    setAiScore(null);
+                    try {
+                      const response = await applicationService.getAIResumeScore(selectedApplicant._id);
+                      if (response.success) {
+                        setAiScore(response.data.scoring);
+                      }
+                    } catch (error) {
+                      toast.error(error.response?.data?.message || 'Failed to get AI score');
+                    } finally {
+                      setLoadingAiScore(false);
+                    }
+                  }}
+                  loading={loadingAiScore}
+                  disabled={loadingAiScore}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                >
+                  {aiScore ? 'Refresh Score' : 'Get AI Score'}
+                </Button>
+              </div>
+
+              {loadingAiScore && (
+                <div className="text-center py-4 text-primary-500">
+                  Analyzing resume...
+                </div>
+              )}
+
+              {aiScore && !loadingAiScore && (
+                <div className="space-y-4">
+                  {/* Score and Recommendation */}
+                  <div className="flex items-center gap-4">
+                    <div className={`text-3xl font-bold ${aiScore.overallScore >= 70 ? 'text-green-600' :
+                        aiScore.overallScore >= 50 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                      {aiScore.overallScore}/100
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${aiScore.recommendation === 'strong' ? 'bg-green-100 text-green-800' :
+                        aiScore.recommendation === 'moderate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                      {aiScore.recommendation?.toUpperCase()} CANDIDATE
+                    </span>
+                  </div>
+
+                  {/* Summary */}
+                  <p className="text-sm text-primary-700 bg-primary-50 p-3 rounded-lg">
+                    {aiScore.summary}
+                  </p>
+
+                  {/* Skills Match */}
+                  {aiScore.skillsMatch && (
+                    <div>
+                      <h4 className="text-xs font-medium text-primary-600 mb-2">Skills Match ({aiScore.skillsMatch.score}%)</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {aiScore.skillsMatch.matched?.map((skill, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">✓ {skill}</span>
+                        ))}
+                        {aiScore.skillsMatch.missing?.map((skill, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs">✗ {skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Strengths */}
+                  {aiScore.strengths?.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-green-600 mb-1">Strengths</h4>
+                      <ul className="text-xs text-primary-700 list-disc list-inside">
+                        {aiScore.strengths.map((s, i) => <li key={i}>{s}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Gaps */}
+                  {aiScore.gaps?.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-amber-600 mb-1">Areas of Concern</h4>
+                      <ul className="text-xs text-primary-700 list-disc list-inside">
+                        {aiScore.gaps.map((g, i) => <li key={i}>{g}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Interview Focus */}
+                  {aiScore.interviewFocus?.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-blue-600 mb-1">Suggested Interview Topics</h4>
+                      <ul className="text-xs text-primary-700 list-disc list-inside">
+                        {aiScore.interviewFocus.map((t, i) => <li key={i}>{t}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Actions in modal */}
             {canAdvance(selectedApplicant.status) && (

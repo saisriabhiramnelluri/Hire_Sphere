@@ -9,12 +9,14 @@ import {
     IoTrophy,
     IoCode,
     IoList,
+    IoSchool,
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import FadeIn from '../../components/animations/FadeIn';
 import { testService } from '../../services/testService';
+import TestReviewModal from '../../components/test/TestReviewModal';
 import toast from 'react-hot-toast';
 
 const TestResult = () => {
@@ -22,6 +24,7 @@ const TestResult = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [submission, setSubmission] = useState(null);
+    const [showReviewModal, setShowReviewModal] = useState(false);
 
     useEffect(() => {
         fetchResult();
@@ -230,7 +233,7 @@ const TestResult = () => {
             )}
 
             <FadeIn delay={0.4}>
-                <div className="flex justify-center">
+                <div className="flex justify-center gap-4">
                     <Button
                         variant="secondary"
                         icon={<IoArrowBack />}
@@ -238,8 +241,22 @@ const TestResult = () => {
                     >
                         Back to My Tests
                     </Button>
+                    <Button
+                        onClick={() => setShowReviewModal(true)}
+                        icon={<IoSchool />}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0"
+                    >
+                        Review My Test
+                    </Button>
                 </div>
             </FadeIn>
+
+            {/* AI Test Review Modal */}
+            <TestReviewModal
+                isOpen={showReviewModal}
+                onClose={() => setShowReviewModal(false)}
+                submissionId={submissionId}
+            />
         </div>
     );
 };

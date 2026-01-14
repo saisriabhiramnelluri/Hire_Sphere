@@ -13,7 +13,8 @@ import {
   IoAdd,
   IoCloudUpload,
   IoTrash,
-  IoCamera
+  IoCamera,
+  IoSparkles,
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -60,6 +61,10 @@ const Profile = () => {
   const [uploadingResume, setUploadingResume] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  // AI Resume Analysis state
+  const [resumeAnalysis, setResumeAnalysis] = useState(null);
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
   const currentYear = new Date().getFullYear();
   const batchOptions = [
@@ -801,6 +806,127 @@ const Profile = () => {
                     <p className="text-sm text-primary-500 mt-1">Upload your first resume above</p>
                   </div>
                 )}
+              </Card>
+            </FadeIn>
+
+            {/* AI Resume Suggestions Section */}
+            <FadeIn delay={0.6}>
+              <Card title="AI Resume Suggestions">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-primary-600">
+                      Get AI-powered feedback on your resume's ATS compatibility and improvement suggestions.
+                    </p>
+                    <Button
+                      icon={<IoSparkles />}
+                      onClick={async () => {
+                        setLoadingAnalysis(true);
+                        setResumeAnalysis(null);
+                        try {
+                          const response = await userService.getResumeAnalysis();
+                          if (response.success) {
+                            setResumeAnalysis(response.data.analysis);
+                          }
+                        } catch (error) {
+                          toast.error(error.response?.data?.message || 'Failed to get analysis');
+                        } finally {
+                          setLoadingAnalysis(false);
+                        }
+                      }}
+                      loading={loadingAnalysis}
+                      disabled={loadingAnalysis}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                    >
+                      {resumeAnalysis ? 'Refresh Analysis' : 'Get AI Suggestions'}
+                    </Button>
+                  </div>
+
+                  {loadingAnalysis && (
+                    <div className="text-center py-8 text-primary-500">
+                      Analyzing your profile...
+                    </div>
+                  )}
+
+                  {resumeAnalysis && !loadingAnalysis && (
+                    <div className="space-y-6 mt-4">
+                      {/* ATS Score */}
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                        <div className={`text-4xl font-bold ${resumeAnalysis.atsScore >= 70 ? 'text-green-600' :
+                            resumeAnalysis.atsScore >= 50 ? 'text-yellow-600' : 'text-red-600'
+                          }`}>
+                          {resumeAnalysis.atsScore}/100
+                        </div>
+                        <div>
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${resumeAnalysis.atsVerdict === 'Good' ? 'bg-green-100 text-green-800' :
+                              resumeAnalysis.atsVerdict === 'Needs Improvement' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                            {resumeAnalysis.atsVerdict}
+                          </span>
+                          <p className="text-sm text-primary-600 mt-2">{resumeAnalysis.overallFeedback}</p>
+                        </div>
+                      </div>
+
+                      {/* Section Analysis */}
+                      {resumeAnalysis.sectionAnalysis?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-primary-900 mb-3">Section Analysis</h4>
+                          <div className="space-y-3">
+                            {resumeAnalysis.sectionAnalysis.map((section, i) => (
+                              <div key={i} className="p-3 bg-primary-50 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="font-medium text-primary-800">{section.section}</span>
+                                  <span className={`text-sm font-bold ${section.score >= 70 ? 'text-green-600' :
+                                      section.score >= 50 ? 'text-yellow-600' : 'text-red-600'
+                                    }`}>{section.score}%</span>
+                                </div>
+                                <p className="text-sm text-primary-600 mb-2">{section.feedback}</p>
+                                {section.suggestions?.length > 0 && (
+                                  <ul className="text-xs text-primary-700 list-disc list-inside">
+                                    {section.suggestions.map((s, j) => <li key={j}>{s}</li>)}
+                                  </ul>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Suggested Skills */}
+                      {resumeAnalysis.suggestedSkillsToAdd?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-primary-900 mb-2">Suggested Skills to Add</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {resumeAnalysis.suggestedSkillsToAdd.map((skill, i) => (
+                              <span key={i} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                + {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Quick Wins */}
+                      {resumeAnalysis.quickWins?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-green-700 mb-2">⚡ Quick Wins</h4>
+                          <ul className="text-sm text-primary-700 list-disc list-inside space-y-1">
+                            {resumeAnalysis.quickWins.map((win, i) => <li key={i}>{win}</li>)}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Advanced Tips */}
+                      {resumeAnalysis.advancedTips?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-purple-700 mb-2">🚀 Advanced Tips</h4>
+                          <ul className="text-sm text-primary-700 list-disc list-inside space-y-1">
+                            {resumeAnalysis.advancedTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </Card>
             </FadeIn>
           </div>

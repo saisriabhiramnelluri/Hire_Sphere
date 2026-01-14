@@ -54,5 +54,10 @@ export const userService = {
       transformRequest: [(data) => data], // Prevent any transformation
     });
   },
+
+  // Get AI resume analysis
+  getResumeAnalysis: async () => {
+    return await api.get('/student/resume-analysis');
+  },
 };
 

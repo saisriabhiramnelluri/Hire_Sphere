@@ -9,6 +9,7 @@ import {
     getSubmissionReport,
     recordProctoringEvent,
     getDetailedPerformanceReport,
+    getAITestReview,
 } from '../controllers/submissionController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
@@ -28,6 +29,9 @@ router.post('/:submissionId/proctoring', authorizeRoles('student'), recordProcto
 
 // Report (accessible by both)
 router.get('/:submissionId/report', getSubmissionReport);
+
+// AI Review for students
+router.get('/:submissionId/ai-review', authorizeRoles('student'), getAITestReview);
 
 // Recruiter routes
 router.get('/:submissionId/performance-report', authorizeRoles('recruiter'), getDetailedPerformanceReport);

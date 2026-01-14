@@ -6,6 +6,10 @@ import { sendSuccessResponse, sendErrorResponse } from '../utils/responseHandler
 import { uploadToCloudinary, deleteFromCloudinary } from '../config/cloudinary.js';
 import { uploadToFirebase, deleteFromFirebase } from '../config/firebase.js';
 import { checkEligibility } from '../services/eligibilityService.js';
+import { analyzeResumeForATS } from '../services/aiService.js';
+import https from 'https';
+import http from 'http';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 export const createProfile = async (req, res) => {
   try {
@@ -322,5 +326,120 @@ export const getDashboard = async (req, res) => {
     });
   } catch (error) {
     sendErrorResponse(res, error.message, 500);
+  }
+};
+
+// Get AI resume analysis for student
+export const getResumeAnalysis = async (req, res) => {
+  try {
+    const student = await Student.findOne({ userId: req.user._id });
+
+    if (!student) {
+      return sendErrorResponse(res, 'Profile not found', 404);
+    }
+
+    // Check if student has uploaded a resume
+    if (!student.resumes || student.resumes.length === 0) {
+      return sendErrorResponse(res, 'Please upload a resume first', 400);
+    }
+
+    // Get the default resume or the first one
+    const resume = student.resumes.find(r => r.isDefault) || student.resumes[0];
+
+    if (!resume || !resume.url) {
+      return sendErrorResponse(res, 'Resume URL not found', 400);
+    }
+
+    console.log('Fetching resume from URL:', resume.url);
+
+    let resumeText = '';
+
+    try {
+
+      // Fetch PDF from URL with redirect handling
+      const fetchPdf = (url, redirectCount = 0) => {
+        return new Promise((resolve, reject) => {
+          if (redirectCount > 5) {
+            return reject(new Error('Too many redirects'));
+          }
+
+          const protocol = url.startsWith('https') ? https : http;
+
+          const request = protocol.get(url, (response) => {
+            // Handle redirects
+            if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+              console.log('Redirect to:', response.headers.location);
+              return fetchPdf(response.headers.location, redirectCount + 1).then(resolve).catch(reject);
+            }
+
+            if (response.statusCode !== 200) {
+              return reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`));
+            }
+
+            const chunks = [];
+            response.on('data', (chunk) => chunks.push(chunk));
+            response.on('end', () => {
+              const buffer = Buffer.concat(chunks);
+              console.log('Downloaded PDF size:', buffer.length, 'bytes');
+              resolve(buffer);
+            });
+            response.on('error', reject);
+          });
+
+          request.on('error', reject);
+          request.setTimeout(30000, () => {
+            request.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+      };
+
+      const pdfBuffer = await fetchPdf(resume.url);
+
+      // Check if buffer is a valid PDF (starts with %PDF)
+      const pdfHeader = pdfBuffer.slice(0, 5).toString();
+      if (!pdfHeader.startsWith('%PDF')) {
+        console.error('Invalid PDF header:', pdfHeader);
+        return sendErrorResponse(res, 'The file does not appear to be a valid PDF', 400);
+      }
+
+      // Use pdfjs-dist to extract text (convert Buffer to Uint8Array)
+      const uint8Array = new Uint8Array(pdfBuffer);
+      const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
+      const pdfDoc = await loadingTask.promise;
+
+      let textContent = '';
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const content = await page.getTextContent();
+        const pageText = content.items.map(item => item.str).join(' ');
+        textContent += pageText + '\n';
+      }
+
+      resumeText = textContent;
+
+      console.log('Extracted text length:', resumeText?.length || 0);
+
+      if (!resumeText || resumeText.trim().length < 50) {
+        return sendErrorResponse(res, 'Could not extract text from resume. Your PDF may be image-based or scanned. Please upload a text-based PDF.', 400);
+      }
+
+      console.log('Successfully extracted resume text, first 200 chars:', resumeText.substring(0, 200));
+    } catch (pdfError) {
+      console.error('PDF parsing error:', pdfError.message);
+      console.error('Full error:', pdfError);
+      return sendErrorResponse(res, `Failed to process resume: ${pdfError.message}`, 400);
+    }
+
+    // Generate AI analysis based ONLY on the extracted resume text
+    const analysis = await analyzeResumeForATS(resumeText);
+
+    sendSuccessResponse(res, 'Resume analysis generated successfully', {
+      analysis,
+      resumeTitle: resume.title,
+    });
+  } catch (error) {
+    console.error('getResumeAnalysis error:', error);
+    sendErrorResponse(res, error.message || 'Failed to analyze resume', 500);
   }
 };

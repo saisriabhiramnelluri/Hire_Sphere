@@ -101,6 +101,11 @@ export const testService = {
         return await api.get(`/submissions/${submissionId}/report`);
     },
 
+    // Get AI-powered test review
+    getAITestReview: async (submissionId) => {
+        return await api.get(`/submissions/${submissionId}/ai-review`);
+    },
+
     // Record proctoring event
     recordProctoringEvent: async (submissionId, eventType) => {
         return await api.post(`/submissions/${submissionId}/proctoring`, {

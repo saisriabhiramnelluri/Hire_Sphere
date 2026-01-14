@@ -42,4 +42,9 @@ export const applicationService = {
   addInterviewFeedback: async (id, feedbackData) => {
     return await api.post(`/recruiter/applications/${id}/interview-feedback`, feedbackData);
   },
+
+  // Get AI-powered resume score
+  getAIResumeScore: async (applicationId) => {
+    return await api.get(`/applications/${applicationId}/ai-score`);
+  },
 };

@@ -4,6 +4,7 @@ import Student from '../models/Student.js';
 import Recruiter from '../models/Recruiter.js';
 import { sendSuccessResponse, sendErrorResponse } from '../utils/responseHandler.js';
 import { executeCode, generatePerformanceReport } from '../services/codeExecutionService.js';
+import { analyzeTestPerformance } from '../services/aiService.js';
 
 // Get student's scheduled/active tests
 export const getStudentTests = async (req, res) => {
@@ -560,5 +561,48 @@ export const getDetailedPerformanceReport = async (req, res) => {
     } catch (error) {
         console.error('Error generating performance report:', error);
         sendErrorResponse(res, error.message, 500);
+    }
+};
+
+// Get AI-powered test review for student
+export const getAITestReview = async (req, res) => {
+    try {
+        const { submissionId } = req.params;
+
+        const student = await Student.findOne({ userId: req.user._id });
+        if (!student) {
+            return sendErrorResponse(res, 'Student profile not found', 404);
+        }
+
+        const submission = await TestSubmission.findById(submissionId)
+            .populate('testId');
+
+        if (!submission) {
+            return sendErrorResponse(res, 'Submission not found', 404);
+        }
+
+        // Verify the student owns this submission
+        if (submission.studentId.toString() !== student._id.toString()) {
+            return sendErrorResponse(res, 'Unauthorized', 403);
+        }
+
+        // Only allow review for submitted/evaluated tests
+        if (!['submitted', 'evaluated'].includes(submission.status)) {
+            return sendErrorResponse(res, 'Test must be completed to get AI review', 400);
+        }
+
+        const test = submission.testId;
+
+        // Generate AI analysis
+        const analysis = await analyzeTestPerformance(test, submission);
+
+        sendSuccessResponse(res, 'AI review generated successfully', {
+            analysis,
+            testTitle: test.title,
+            score: submission.scores
+        });
+    } catch (error) {
+        console.error('getAITestReview error:', error);
+        sendErrorResponse(res, error.message || 'Failed to generate AI review', 500);
     }
 };

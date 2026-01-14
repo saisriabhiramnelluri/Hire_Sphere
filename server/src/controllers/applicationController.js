@@ -4,6 +4,7 @@ import Student from '../models/Student.js';
 import { sendSuccessResponse, sendErrorResponse } from '../utils/responseHandler.js';
 import { checkEligibility } from '../services/eligibilityService.js';
 import { createNotification } from '../services/notificationService.js';
+import { scoreResume } from '../services/aiService.js';
 
 export const createApplication = async (req, res) => {
   try {
@@ -143,5 +144,35 @@ export const withdrawApplication = async (req, res) => {
     sendSuccessResponse(res, 'Application withdrawn successfully', { application });
   } catch (error) {
     sendErrorResponse(res, error.message, 500);
+  }
+};
+
+// Get AI-powered resume score for recruiter
+export const getAIResumeScore = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    const application = await Application.findById(applicationId)
+      .populate('studentId')
+      .populate('driveId');
+
+    if (!application) {
+      return sendErrorResponse(res, 'Application not found', 404);
+    }
+
+    const studentData = application.studentId;
+    const driveData = application.driveId;
+
+    // Generate AI score
+    const scoring = await scoreResume(studentData, driveData);
+
+    sendSuccessResponse(res, 'AI resume score generated successfully', {
+      scoring,
+      studentName: `${studentData.firstName} ${studentData.lastName}`,
+      jobTitle: driveData.jobTitle,
+    });
+  } catch (error) {
+    console.error('getAIResumeScore error:', error);
+    sendErrorResponse(res, error.message || 'Failed to generate AI resume score', 500);
   }
 };

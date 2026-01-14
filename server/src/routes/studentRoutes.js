@@ -11,6 +11,7 @@ import {
   getMyApplications,
   getMyOffers,
   getDashboard,
+  getResumeAnalysis,
 } from '../controllers/studentController.js';
 import { getMyNotifications, markAsRead, markAllAsRead, deleteNotification } from '../controllers/notificationController.js';
 import { protect } from '../middleware/authMiddleware.js';
@@ -38,6 +39,7 @@ router.get('/drives', getEligibleDrives);
 router.get('/drives/:id', getDriveDetails);
 router.get('/applications', getMyApplications);
 router.get('/offers', getMyOffers);
+router.get('/resume-analysis', getResumeAnalysis);
 
 router.get('/notifications', getMyNotifications);
 router.patch('/notifications/:id/read', markAsRead);
