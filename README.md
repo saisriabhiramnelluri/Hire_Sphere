@@ -131,57 +131,200 @@ npm run dev
 
 ```
 hiresphere/
-├── client/                 # React frontend
+├── client/                          # React Frontend
+│   ├── public/                      # Static assets
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Page components by role
-│   │   ├── services/       # API service modules
-│   │   ├── hooks/          # Custom React hooks
-│   │   └── utils/          # Utility functions
-│   └── ...
-├── server/                 # Express backend
+│   │   ├── assets/                  # Images and static files
+│   │   ├── components/
+│   │   │   ├── animations/          # Animation components
+│   │   │   │   └── FadeIn.jsx
+│   │   │   ├── common/              # Reusable UI components
+│   │   │   │   ├── Button.jsx
+│   │   │   │   ├── Card.jsx
+│   │   │   │   ├── Dropdown.jsx
+│   │   │   │   ├── FileUpload.jsx
+│   │   │   │   ├── Input.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   ├── Modal.jsx
+│   │   │   │   ├── Pagination.jsx
+│   │   │   │   ├── SearchBar.jsx
+│   │   │   │   ├── Table.jsx
+│   │   │   │   └── DraggableHiringPipeline.jsx
+│   │   │   ├── interview/           # Interview components
+│   │   │   │   └── VideoRoom.jsx
+│   │   │   ├── layout/              # Layout components
+│   │   │   │   ├── Header.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   └── DashboardLayout.jsx
+│   │   │   └── test/                # Test-related components
+│   │   │       ├── AIQuestionModal.jsx
+│   │   │       ├── CodeEditor.jsx
+│   │   │       ├── MCQQuestion.jsx
+│   │   │       ├── TestReviewModal.jsx
+│   │   │       └── Timer.jsx
+│   │   ├── context/                 # React Context providers
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   ├── hooks/                   # Custom React hooks
+│   │   │   ├── useAuth.js
+│   │   │   ├── useSocket.js
+│   │   │   └── useDebounce.js
+│   │   ├── pages/
+│   │   │   ├── admin/               # Admin pages
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   ├── ManageUsers.jsx
+│   │   │   │   ├── ManageDrives.jsx
+│   │   │   │   ├── Analytics.jsx
+│   │   │   │   ├── Reports.jsx
+│   │   │   │   ├── Settings.jsx
+│   │   │   │   ├── Notifications.jsx
+│   │   │   │   ├── OfferManagement.jsx
+│   │   │   │   └── EligibilityRules.jsx
+│   │   │   ├── auth/                # Authentication pages
+│   │   │   │   ├── Login.jsx
+│   │   │   │   ├── Register.jsx
+│   │   │   │   └── ForgotPassword.jsx
+│   │   │   ├── interview/           # Interview pages
+│   │   │   │   └── InterviewRoom.jsx
+│   │   │   ├── public/              # Public pages
+│   │   │   │   ├── Home.jsx
+│   │   │   │   ├── About.jsx
+│   │   │   │   └── Contact.jsx
+│   │   │   ├── recruiter/           # Recruiter pages
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   ├── CompanyProfile.jsx
+│   │   │   │   ├── CreateDrive.jsx
+│   │   │   │   ├── EditDrive.jsx
+│   │   │   │   ├── MyDrives.jsx
+│   │   │   │   ├── DriveDetails.jsx
+│   │   │   │   ├── ViewApplicants.jsx
+│   │   │   │   ├── TestDesigner.jsx
+│   │   │   │   ├── TestResults.jsx
+│   │   │   │   ├── MyTests.jsx
+│   │   │   │   ├── Interviews.jsx
+│   │   │   │   ├── OfferManagement.jsx
+│   │   │   │   └── Notifications.jsx
+│   │   │   └── student/             # Student pages
+│   │   │       ├── Dashboard.jsx
+│   │   │       ├── Profile.jsx
+│   │   │       ├── EditProfile.jsx
+│   │   │       ├── BrowseDrives.jsx
+│   │   │       ├── DriveDetails.jsx
+│   │   │       ├── MyApplications.jsx
+│   │   │       ├── ApplicationStatus.jsx
+│   │   │       ├── MyTests.jsx
+│   │   │       ├── TakeTest.jsx
+│   │   │       ├── TestInstructions.jsx
+│   │   │       ├── TestResult.jsx
+│   │   │       ├── MyInterviews.jsx
+│   │   │       ├── MyOffers.jsx
+│   │   │       ├── ResumeManager.jsx
+│   │   │       └── Notifications.jsx
+│   │   ├── routes/                  # Route configurations
+│   │   │   ├── AppRoutes.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   ├── services/                # API service modules
+│   │   │   ├── api.js               # Axios instance
+│   │   │   ├── authService.js
+│   │   │   ├── userService.js
+│   │   │   ├── driveService.js
+│   │   │   ├── applicationService.js
+│   │   │   ├── testService.js
+│   │   │   ├── interviewService.js
+│   │   │   ├── offerService.js
+│   │   │   └── uploadService.js
+│   │   ├── styles/                  # Global styles
+│   │   │   └── index.css
+│   │   ├── utils/                   # Utility functions
+│   │   │   ├── constants.js
+│   │   │   └── helpers.js
+│   │   ├── App.jsx
+│   │   └── index.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── server/                          # Express Backend
 │   ├── src/
-│   │   ├── controllers/    # Request handlers
-│   │   ├── models/         # Mongoose schemas
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   ├── middleware/     # Custom middleware
-│   │   └── config/         # Configuration files
-│   └── ...
+│   │   ├── config/                  # Configuration files
+│   │   │   ├── db.js                # MongoDB connection
+│   │   │   ├── cloudinary.js        # Cloudinary setup
+│   │   │   ├── firebase.js          # Firebase setup
+│   │   │   └── socket.js            # Socket.IO setup
+│   │   ├── controllers/             # Request handlers
+│   │   │   ├── authController.js
+│   │   │   ├── studentController.js
+│   │   │   ├── recruiterController.js
+│   │   │   ├── adminController.js
+│   │   │   ├── driveController.js
+│   │   │   ├── applicationController.js
+│   │   │   ├── testController.js
+│   │   │   ├── submissionController.js
+│   │   │   ├── interviewController.js
+│   │   │   ├── offerController.js
+│   │   │   ├── notificationController.js
+│   │   │   └── analyticsController.js
+│   │   ├── middleware/              # Custom middleware
+│   │   │   ├── authMiddleware.js
+│   │   │   ├── roleMiddleware.js
+│   │   │   ├── errorMiddleware.js
+│   │   │   ├── uploadMiddleware.js
+│   │   │   ├── rateLimitMiddleware.js
+│   │   │   └── validationMiddleware.js
+│   │   ├── models/                  # Mongoose schemas
+│   │   │   ├── User.js
+│   │   │   ├── Student.js
+│   │   │   ├── Recruiter.js
+│   │   │   ├── Drive.js
+│   │   │   ├── Application.js
+│   │   │   ├── Test.js
+│   │   │   ├── TestSubmission.js
+│   │   │   ├── Question.js
+│   │   │   ├── Interview.js
+│   │   │   ├── Offer.js
+│   │   │   ├── Notification.js
+│   │   │   ├── Document.js
+│   │   │   └── AuditLog.js
+│   │   ├── routes/                  # API routes
+│   │   │   ├── index.js             # Route aggregator
+│   │   │   ├── authRoutes.js
+│   │   │   ├── studentRoutes.js
+│   │   │   ├── recruiterRoutes.js
+│   │   │   ├── adminRoutes.js
+│   │   │   ├── driveRoutes.js
+│   │   │   ├── applicationRoutes.js
+│   │   │   ├── testRoutes.js
+│   │   │   ├── submissionRoutes.js
+│   │   │   ├── interviewRoutes.js
+│   │   │   ├── offerRoutes.js
+│   │   │   ├── notificationRoutes.js
+│   │   │   └── uploadRoutes.js
+│   │   ├── services/                # Business logic services
+│   │   │   ├── aiService.js         # Google Gemini AI
+│   │   │   ├── emailService.js
+│   │   │   ├── eligibilityService.js
+│   │   │   ├── codeExecutionService.js
+│   │   │   ├── notificationService.js
+│   │   │   ├── reportService.js
+│   │   │   └── fileService.js
+│   │   ├── utils/                   # Utility functions
+│   │   │   ├── responseHandler.js
+│   │   │   └── helpers.js
+│   │   ├── validators/              # Input validators
+│   │   │   ├── authValidator.js
+│   │   │   ├── userValidator.js
+│   │   │   └── driveValidator.js
+│   │   ├── jobs/                    # Background jobs
+│   │   │   └── scheduler.js
+│   │   ├── seeds/                   # Database seeders
+│   │   │   └── seedData.js
+│   │   └── app.js                   # Express app setup
+│   ├── server.js                    # Entry point
+│   ├── package.json
+│   └── .env
+│
+├── .gitignore
 └── README.md
 ```
-
-## API Endpoints
-
-### Authentication
-- POST /api/auth/register - User registration
-- POST /api/auth/login - User login
-- POST /api/auth/logout - User logout
-
-### Students
-- GET /api/student/profile - Get student profile
-- PATCH /api/student/profile - Update profile
-- POST /api/student/resume - Upload resume
-- GET /api/student/drives - Get eligible drives
-- GET /api/student/resume-analysis - Get AI resume analysis
-
-### Recruiters
-- GET /api/recruiter/profile - Get recruiter profile
-- POST /api/recruiter/drives - Create placement drive
-- GET /api/recruiter/drives/:id/applicants - Get applicants
-
-### Drives
-- GET /api/drives - List all drives
-- GET /api/drives/:id - Get drive details
-- POST /api/applications - Apply to drive
-
-### Tests
-- POST /api/tests - Create test
-- POST /api/tests/generate-questions - AI question generation
-- GET /api/submissions/:id/ai-review - AI test review
-
-### Applications
-- GET /api/applications/:id/ai-score - AI resume scoring
 
 ## License
 
