@@ -1,3 +1,9 @@
+/**
+ * Helper Utilities
+ * Common utility functions for formatting, validation, and data manipulation
+ */
+
+// Formats a date to a readable string (e.g., "January 14, 2026")
 export const formatDate = (date) => {
   if (!date) return '';
   return new Date(date).toLocaleDateString('en-IN', {
@@ -7,6 +13,7 @@ export const formatDate = (date) => {
   });
 };
 
+// Formats date with time (e.g., "January 14, 2026, 10:30 PM")
 export const formatDateTime = (date) => {
   if (!date) return '';
   return new Date(date).toLocaleString('en-IN', {
@@ -18,6 +25,7 @@ export const formatDateTime = (date) => {
   });
 };
 
+// Formats amount as currency (e.g., "₹50,000")
 export const formatCurrency = (amount, currency = 'INR') => {
   if (!amount) return '0';
   return new Intl.NumberFormat('en-IN', {
@@ -27,7 +35,7 @@ export const formatCurrency = (amount, currency = 'INR') => {
   }).format(amount);
 };
 
-// ✅ ADD MISSING FUNCTIONS
+// Formats CTC value (e.g., "₹10 LPA")
 export const formatCTC = (ctc) => {
   if (!ctc) return 'Not specified';
   return `₹${ctc} LPA`;

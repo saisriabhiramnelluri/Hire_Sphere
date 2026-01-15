@@ -1,8 +1,15 @@
+/**
+ * WebRTC Hook
+ * Manages peer-to-peer video connections for interview rooms
+ * Handles media streams, signaling, and peer connection lifecycle
+ */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 
+// Socket server URL
 const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+// ICE server configuration for WebRTC
 const ICE_SERVERS = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -83,9 +90,9 @@ export const useWebRTC = (roomId, userId, userName) => {
             }));
         };
 
-        // Handle connection state changes
+        // Handle connection state changes (for debugging purposes)
         peerConnection.onconnectionstatechange = () => {
-            console.log(`Peer ${remoteSocketId} state:`, peerConnection.connectionState);
+            // Connection state: peerConnection.connectionState
         };
 
         peerConnectionsRef.current[remoteSocketId] = peerConnection;
@@ -104,7 +111,6 @@ export const useWebRTC = (roomId, userId, userName) => {
             });
 
             socketRef.current.on('connect', () => {
-                console.log('Connected to signaling server');
                 setIsConnected(true);
 
                 // Join the room
@@ -117,7 +123,6 @@ export const useWebRTC = (roomId, userId, userName) => {
 
             // Handle existing users in room
             socketRef.current.on('existing-users', async (users) => {
-                console.log('Existing users:', users);
                 setParticipants(users);
 
                 // Create offers for each existing user
@@ -136,13 +141,11 @@ export const useWebRTC = (roomId, userId, userName) => {
 
             // Handle new user joining
             socketRef.current.on('user-joined', async ({ socketId, userId: uid, userName: uname }) => {
-                console.log('User joined:', uname);
                 setParticipants((prev) => [...prev, { socketId, userId: uid, userName: uname }]);
             });
 
             // Handle incoming offer
             socketRef.current.on('offer', async ({ offer, from }) => {
-                console.log('Received offer from:', from);
                 const pc = createPeerConnection(from);
                 await pc.setRemoteDescription(new RTCSessionDescription(offer));
                 const answer = await pc.createAnswer();
@@ -157,7 +160,6 @@ export const useWebRTC = (roomId, userId, userName) => {
 
             // Handle incoming answer
             socketRef.current.on('answer', async ({ answer, from }) => {
-                console.log('Received answer from:', from);
                 const pc = peerConnectionsRef.current[from];
                 if (pc) {
                     await pc.setRemoteDescription(new RTCSessionDescription(answer));
@@ -174,7 +176,6 @@ export const useWebRTC = (roomId, userId, userName) => {
 
             // Handle user leaving
             socketRef.current.on('user-left', ({ socketId }) => {
-                console.log('User left:', socketId);
                 setParticipants((prev) => prev.filter((p) => p.socketId !== socketId));
                 setRemoteStreams((prev) => {
                     const updated = { ...prev };

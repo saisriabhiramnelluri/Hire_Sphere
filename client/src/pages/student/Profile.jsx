@@ -566,7 +566,7 @@ const Profile = () => {
                     className="absolute bottom-0 right-0 w-10 h-10 bg-secondary-500 hover:bg-secondary-600 text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-colors"
                   >
                     {uploadingPhoto ? (
-                      <span className="animate-spin">⏳</span>
+                      <span className="animate-spin"><IoTime size={16} /></span>
                     ) : (
                       <IoCamera size={20} />
                     )}
@@ -790,7 +790,7 @@ const Profile = () => {
                             title="Delete"
                           >
                             {deletingResumeId === resume._id ? (
-                              <span className="animate-spin">⏳</span>
+                              <span className="animate-spin"><IoTime size={16} /></span>
                             ) : (
                               <IoTrash size={20} />
                             )}
@@ -852,13 +852,13 @@ const Profile = () => {
                       {/* ATS Score */}
                       <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
                         <div className={`text-4xl font-bold ${resumeAnalysis.atsScore >= 70 ? 'text-green-600' :
-                            resumeAnalysis.atsScore >= 50 ? 'text-yellow-600' : 'text-red-600'
+                          resumeAnalysis.atsScore >= 50 ? 'text-yellow-600' : 'text-red-600'
                           }`}>
                           {resumeAnalysis.atsScore}/100
                         </div>
                         <div>
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${resumeAnalysis.atsVerdict === 'Good' ? 'bg-green-100 text-green-800' :
-                              resumeAnalysis.atsVerdict === 'Needs Improvement' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                            resumeAnalysis.atsVerdict === 'Needs Improvement' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
                             }`}>
                             {resumeAnalysis.atsVerdict}
                           </span>
@@ -876,7 +876,7 @@ const Profile = () => {
                                 <div className="flex items-center justify-between mb-2">
                                   <span className="font-medium text-primary-800">{section.section}</span>
                                   <span className={`text-sm font-bold ${section.score >= 70 ? 'text-green-600' :
-                                      section.score >= 50 ? 'text-yellow-600' : 'text-red-600'
+                                    section.score >= 50 ? 'text-yellow-600' : 'text-red-600'
                                     }`}>{section.score}%</span>
                                 </div>
                                 <p className="text-sm text-primary-600 mb-2">{section.feedback}</p>
@@ -908,7 +908,7 @@ const Profile = () => {
                       {/* Quick Wins */}
                       {resumeAnalysis.quickWins?.length > 0 && (
                         <div>
-                          <h4 className="font-medium text-green-700 mb-2">⚡ Quick Wins</h4>
+                          <h4 className="font-medium text-accent-700 mb-2">Quick Wins</h4>
                           <ul className="text-sm text-primary-700 list-disc list-inside space-y-1">
                             {resumeAnalysis.quickWins.map((win, i) => <li key={i}>{win}</li>)}
                           </ul>
@@ -918,7 +918,7 @@ const Profile = () => {
                       {/* Advanced Tips */}
                       {resumeAnalysis.advancedTips?.length > 0 && (
                         <div>
-                          <h4 className="font-medium text-purple-700 mb-2">🚀 Advanced Tips</h4>
+                          <h4 className="font-medium text-secondary-700 mb-2">Advanced Tips</h4>
                           <ul className="text-sm text-primary-700 list-disc list-inside space-y-1">
                             {resumeAnalysis.advancedTips.map((tip, i) => <li key={i}>{tip}</li>)}
                           </ul>

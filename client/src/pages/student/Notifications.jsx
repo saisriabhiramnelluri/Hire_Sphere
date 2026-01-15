@@ -1,3 +1,7 @@
+/**
+ * Student Notifications Page
+ * Displays and manages notifications for student users
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,7 +11,16 @@ import {
   IoTrash,
   IoMailOpen,
   IoCheckmarkCircle,
-  IoClose
+  IoClose,
+  IoMegaphone,
+  IoDocument,
+  IoCalendar,
+  IoGift,
+  IoCheckmark,
+  IoCloseCircle,
+  IoStar,
+  IoStatsChart,
+  IoNotificationsOutline
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -40,26 +53,28 @@ const Notifications = () => {
     return true;
   });
 
+  // Returns the appropriate icon component based on notification type
   const getNotificationIcon = (type) => {
+    const iconClass = "text-secondary-500";
     switch (type) {
       case 'drive_announcement':
-        return '📢';
+        return <IoMegaphone className={iconClass} size={20} />;
       case 'application_update':
-        return '📝';
+        return <IoDocument className={iconClass} size={20} />;
       case 'interview_schedule':
-        return '📅';
+        return <IoCalendar className={iconClass} size={20} />;
       case 'offer_received':
-        return '🎉';
+        return <IoGift className={iconClass} size={20} />;
       case 'application_accepted':
-        return '✅';
+        return <IoCheckmark className={iconClass} size={20} />;
       case 'application_rejected':
-        return '❌';
+        return <IoCloseCircle className={iconClass} size={20} />;
       case 'shortlisted':
-        return '⭐';
+        return <IoStar className={iconClass} size={20} />;
       case 'stage_update':
-        return '📊';
+        return <IoStatsChart className={iconClass} size={20} />;
       default:
-        return '🔔';
+        return <IoNotificationsOutline className={iconClass} size={20} />;
     }
   };
 

@@ -1,3 +1,7 @@
+/**
+ * My Interviews Page
+ * Displays scheduled and completed interviews for students
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -10,6 +14,8 @@ import {
     IoCloseCircle,
     IoPlay,
     IoEnter,
+    IoRadioButtonOn,
+    IoStar,
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -123,8 +129,8 @@ const MyInterviews = () => {
                             key={tab}
                             onClick={() => setFilter(tab)}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === tab
-                                    ? 'bg-secondary-500 text-white'
-                                    : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                                ? 'bg-secondary-500 text-white'
+                                : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -167,8 +173,8 @@ const MyInterviews = () => {
                                                         {statusBadge.icon} {interview.status}
                                                     </span>
                                                     {isNow && (
-                                                        <span className="badge badge-success animate-pulse">
-                                                            🔴 Live Now
+                                                        <span className="badge badge-success animate-pulse flex items-center gap-1">
+                                                            <IoRadioButtonOn size={10} /> Live Now
                                                         </span>
                                                     )}
                                                 </div>
@@ -213,8 +219,8 @@ const MyInterviews = () => {
                                                     </Button>
                                                 )}
                                                 {interview.status === 'completed' && interview.feedback && (
-                                                    <span className="text-sm text-primary-600">
-                                                        Rating: {'⭐'.repeat(interview.feedback.rating || 0)}
+                                                    <span className="text-sm text-primary-600 flex items-center gap-1">
+                                                        Rating: {[...Array(interview.feedback.rating || 0)].map((_, i) => <IoStar key={i} className="text-amber-500" size={14} />)}
                                                     </span>
                                                 )}
                                             </div>

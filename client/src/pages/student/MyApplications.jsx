@@ -1,3 +1,7 @@
+/**
+ * My Applications Page
+ * Displays and tracks student's job applications through the hiring process
+ */
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -38,7 +42,7 @@ const getStatusInfo = (app) => {
     return { label: 'Applied', color: CORE_STATUS_COLORS.applied };
   }
   if (status === 'offered') {
-    return { label: 'Offered 🎉', color: CORE_STATUS_COLORS.offered };
+    return { label: 'Offered', color: CORE_STATUS_COLORS.offered };
   }
   if (status === 'withdrawn') {
     return { label: 'Withdrawn', color: CORE_STATUS_COLORS.withdrawn };

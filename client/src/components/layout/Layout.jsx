@@ -1,4 +1,8 @@
-import React from 'react';
+/**
+ * Layout Component
+ * Main layout wrapper with responsive sidebar support
+ */
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
@@ -8,6 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 const Layout = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Auth pages - no layout at all
   const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].some(
@@ -32,11 +37,11 @@ const Layout = ({ children }) => {
   // Authenticated user on dashboard pages - show full layout with sidebar
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <div className="flex flex-1">
-        <Sidebar />
-        <main className="flex-1 bg-primary-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <main className="flex-1 bg-primary-50 w-full min-w-0">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
             {children}
           </div>
         </main>
@@ -47,4 +52,3 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
-

@@ -1,12 +1,16 @@
+/**
+ * Student Dashboard
+ * Displays placement overview, stats, and recent applications
+ */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  IoBriefcase, 
-  IoDocuments, 
-  IoTrophy, 
+import {
+  IoBriefcase,
+  IoDocuments,
+  IoTrophy,
   IoCheckmarkCircle,
-  IoArrowForward 
+  IoArrowForward
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Loader from '../../components/common/Loader';
@@ -81,48 +85,48 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <FadeIn>
         <div>
-          <h1 className="text-3xl font-bold text-primary-900">Dashboard</h1>
-          <p className="text-primary-600 mt-1">Welcome back! Here's your placement overview</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary-900">Dashboard</h1>
+          <p className="text-sm sm:text-base text-primary-600 mt-1">Welcome back! Here's your placement overview</p>
         </div>
       </FadeIn>
 
       {placementStatus?.isPlaced && (
         <FadeIn delay={0.1}>
           <Card className="bg-gradient-to-r from-accent-500 to-accent-600 text-white">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-bold mb-2">Congratulations! You're Placed! 🎉</h3>
-                <p className="text-accent-100">
+                <h3 className="text-lg sm:text-xl font-bold mb-2">Congratulations! You're Placed!</h3>
+                <p className="text-accent-100 text-sm sm:text-base">
                   <strong>{placementStatus.placedCompany}</strong> • {formatCTC(placementStatus.placedCTC)}
                 </p>
-                <p className="text-sm text-accent-100 mt-1">
+                <p className="text-xs sm:text-sm text-accent-100 mt-1">
                   Placed on {formatDate(placementStatus.placedDate)}
                 </p>
               </div>
-              <IoTrophy size={64} className="text-accent-200" />
+              <IoTrophy size={48} className="text-accent-200 hidden sm:block" />
             </div>
           </Card>
         </FadeIn>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {statCards.map((stat, index) => (
           <FadeIn key={index} delay={index * 0.1}>
             <Link to={stat.link}>
               <motion.div
                 whileHover={{ y: -4 }}
-                className={`${stat.bgColor} rounded-xl p-6 border border-primary-200 cursor-pointer`}
+                className={`${stat.bgColor} rounded-xl p-4 sm:p-6 border border-primary-200 cursor-pointer`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-primary-600">{stat.title}</p>
-                    <p className="text-3xl font-bold text-primary-900 mt-2">{stat.value}</p>
+                    <p className="text-xs sm:text-sm font-medium text-primary-600">{stat.title}</p>
+                    <p className="text-xl sm:text-3xl font-bold text-primary-900 mt-1 sm:mt-2">{stat.value}</p>
                   </div>
-                  <div className={`${stat.color} p-3 rounded-lg`}>
-                    <stat.icon className="text-white" size={24} />
+                  <div className={`${stat.color} p-2 sm:p-3 rounded-lg`}>
+                    <stat.icon className="text-white" size={20} />
                   </div>
                 </div>
               </motion.div>
@@ -133,10 +137,10 @@ const Dashboard = () => {
 
       <FadeIn delay={0.5}>
         <Card>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-primary-900">Recent Applications</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary-900">Recent Applications</h2>
             <Link to="/student/applications">
-              <button className="text-secondary-600 hover:text-secondary-700 font-medium inline-flex items-center">
+              <button className="text-secondary-600 hover:text-secondary-700 font-medium inline-flex items-center text-sm sm:text-base">
                 View All
                 <IoArrowForward className="ml-2" />
               </button>

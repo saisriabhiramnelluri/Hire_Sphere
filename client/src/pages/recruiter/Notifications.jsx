@@ -1,3 +1,7 @@
+/**
+ * Recruiter Notifications Page
+ * Displays and manages notifications for recruiter users
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,7 +11,13 @@ import {
     IoTrash,
     IoMailOpen,
     IoCheckmarkCircle,
-    IoClose
+    IoClose,
+    IoDocument,
+    IoBriefcase,
+    IoTime,
+    IoCalendar,
+    IoMegaphone,
+    IoNotificationsOutline
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -40,20 +50,22 @@ const Notifications = () => {
         return true;
     });
 
+    // Returns the appropriate icon component based on notification type
     const getNotificationIcon = (type) => {
+        const iconClass = "text-secondary-500";
         switch (type) {
             case 'application_update':
-                return '📝';
+                return <IoDocument className={iconClass} size={20} />;
             case 'offer_response':
-                return '💼';
+                return <IoBriefcase className={iconClass} size={20} />;
             case 'drive_approval_pending':
-                return '⏳';
+                return <IoTime className={iconClass} size={20} />;
             case 'interview_schedule':
-                return '📅';
+                return <IoCalendar className={iconClass} size={20} />;
             case 'general':
-                return '📢';
+                return <IoMegaphone className={iconClass} size={20} />;
             default:
-                return '🔔';
+                return <IoNotificationsOutline className={iconClass} size={20} />;
         }
     };
 
@@ -139,8 +151,8 @@ const Notifications = () => {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === f
-                                    ? 'bg-secondary-500 text-white'
-                                    : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                                ? 'bg-secondary-500 text-white'
+                                : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
                                 }`}
                         >
                             {f.charAt(0).toUpperCase() + f.slice(1)}

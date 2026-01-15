@@ -1,3 +1,7 @@
+/**
+ * My Offers Page
+ * Displays formal offers and pending offer applications for students
+ */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { IoTrophy, IoDownload, IoCheckmarkCircle, IoClose, IoTime, IoDocumentText } from 'react-icons/io5';
@@ -140,8 +144,8 @@ const MyOffers = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center space-x-3 mb-2">
-                              <span className="px-3 py-1 bg-green-100 text-green-800 border border-green-200 rounded-full text-sm font-medium">
-                                🎉 Congratulations!
+                              <span className="px-3 py-1 bg-accent-100 text-accent-800 border border-accent-200 rounded-full text-sm font-medium">
+                                Congratulations!
                               </span>
                             </div>
                             <h3 className="text-xl font-bold text-primary-900">
@@ -299,9 +303,9 @@ const MyOffers = () => {
                             )}
 
                             {offer.status === 'accepted' && (
-                              <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                                <p className="text-green-800 font-medium">
-                                  🎉 Congratulations! You've accepted this offer.
+                              <div className="mt-4 p-4 bg-accent-50 rounded-lg border border-accent-200">
+                                <p className="text-accent-800 font-medium">
+                                  Congratulations! You've accepted this offer.
                                 </p>
                               </div>
                             )}

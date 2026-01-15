@@ -1,3 +1,7 @@
+/**
+ * Navigation Bar Component
+ * Main navigation with user profile and notification dropdown
+ */
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,13 +13,19 @@ import {
   IoPersonCircle,
   IoSettings,
   IoCheckmarkCircle,
-  IoArrowForward
+  IoArrowForward,
+  IoClipboard,
+  IoPerson,
+  IoMegaphone,
+  IoDocument,
+  IoGift,
+  IoNotificationsOutline
 } from 'react-icons/io5';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotification } from '../../hooks/useNotification';
 import { getInitials, formatDate } from '../../utils/helpers';
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick }) => {
   const { user, profile, logout } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotification();
   const navigate = useNavigate();
@@ -39,20 +49,22 @@ const Navbar = () => {
     }
   };
 
+  // Returns the appropriate icon component based on notification type
   const getNotificationIcon = (type) => {
+    const iconClass = "text-secondary-500";
     switch (type) {
       case 'drive_approval_pending':
-        return '📋';
+        return <IoClipboard className={iconClass} size={18} />;
       case 'recruiter_approval_pending':
-        return '👔';
+        return <IoPerson className={iconClass} size={18} />;
       case 'drive_announcement':
-        return '📢';
+        return <IoMegaphone className={iconClass} size={18} />;
       case 'application_update':
-        return '📝';
+        return <IoDocument className={iconClass} size={18} />;
       case 'offer_received':
-        return '🎉';
+        return <IoGift className={iconClass} size={18} />;
       default:
-        return '🔔';
+        return <IoNotificationsOutline className={iconClass} size={18} />;
     }
   };
 
@@ -79,16 +91,27 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white border-b border-primary-200 sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Mobile menu button */}
+            <button
+              onClick={onMenuClick}
+              className="lg:hidden p-2 text-primary-600 hover:text-primary-900 hover:bg-primary-50 rounded-lg transition-colors"
+              aria-label="Open menu"
+            >
+              <IoMenu size={24} />
+            </button>
+
+            {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-secondary-500 to-secondary-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">H</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-secondary-500 to-secondary-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg sm:text-xl">H</span>
               </div>
-              <span className="text-xl font-bold text-primary-900">HireSphere</span>
+              <span className="hidden sm:block text-xl font-bold text-primary-900">HireSphere</span>
             </Link>
           </div>
+
 
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -113,7 +136,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden"
+                    className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-lg border border-primary-200 overflow-hidden max-w-[calc(100vw-1.5rem)]"
                   >
                     <div className="p-4 border-b border-primary-200 flex justify-between items-center">
                       <h3 className="font-semibold text-primary-900">Notifications</h3>

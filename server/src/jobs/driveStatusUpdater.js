@@ -1,3 +1,8 @@
+/**
+ * Drive Status Updater Job
+ * Scheduled job that automatically updates drive statuses based on dates
+ * Runs every 6 hours to close expired drives and activate ongoing drives
+ */
 import cron from 'node-cron';
 import Drive from '../models/Drive.js';
 

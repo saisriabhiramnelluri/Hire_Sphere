@@ -1,3 +1,7 @@
+/**
+ * Recruiter Interviews Page
+ * Displays and manages interview schedule for recruiter users
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -12,6 +16,8 @@ import {
     IoEnter,
     IoTrash,
     IoCreate,
+    IoRadioButtonOn,
+    IoStar,
 } from 'react-icons/io5';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -170,8 +176,8 @@ const RecruiterInterviews = () => {
                             key={tab}
                             onClick={() => setFilter(tab)}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${filter === tab
-                                    ? 'bg-secondary-500 text-white'
-                                    : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                                ? 'bg-secondary-500 text-white'
+                                : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -213,8 +219,8 @@ const RecruiterInterviews = () => {
                                                         {statusBadge.icon} {interview.status}
                                                     </span>
                                                     {isNow && (
-                                                        <span className="badge badge-success animate-pulse">
-                                                            🔴 Live Now
+                                                        <span className="badge badge-success animate-pulse flex items-center gap-1">
+                                                            <IoRadioButtonOn size={10} /> Live Now
                                                         </span>
                                                     )}
                                                 </div>
@@ -329,10 +335,10 @@ const RecruiterInterviews = () => {
                                     <button
                                         key={star}
                                         onClick={() => setFeedbackData((prev) => ({ ...prev, rating: star }))}
-                                        className={`text-3xl transition-transform hover:scale-110 ${star <= feedbackData.rating ? 'text-yellow-500' : 'text-gray-300'
+                                        className={`text-3xl transition-transform hover:scale-110 ${star <= feedbackData.rating ? 'text-amber-500' : 'text-gray-300'
                                             }`}
                                     >
-                                        ⭐
+                                        <IoStar />
                                     </button>
                                 ))}
                             </div>
