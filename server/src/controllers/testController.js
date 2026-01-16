@@ -98,7 +98,7 @@ export const getRecruiterTests = async (req, res) => {
     try {
         const recruiter = await Recruiter.findOne({ userId: req.user._id });
         if (!recruiter) {
-            return sendErrorResponse(res, 'Recruiter profile not found', 404);
+            return sendSuccessResponse(res, 'Tests fetched (new user)', { tests: [] });
         }
 
         const { status, type } = req.query;

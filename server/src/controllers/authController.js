@@ -22,15 +22,20 @@ export const register = async (req, res) => {
 
     const token = user.generateAuthToken();
 
-    await sendEmail({
-      email: user.email,
-      subject: 'Welcome to HireSphere',
-      html: `
-        <h2>Welcome to HireSphere!</h2>
-        <p>Your account has been created successfully.</p>
-        <p>Please complete your profile to get started.</p>
-      `,
-    });
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Welcome to HireSphere',
+        html: `
+          <h2>Welcome to HireSphere!</h2>
+          <p>Your account has been created successfully.</p>
+          <p>Please complete your profile to get started.</p>
+        `,
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError.message);
+      // Continue with registration success even if email fails
+    }
 
     sendSuccessResponse(res, 'Registration successful', {
       user: {
@@ -41,6 +46,9 @@ export const register = async (req, res) => {
       token,
     }, 201);
   } catch (error) {
+    if (error.code === 11000) {
+      return sendErrorResponse(res, 'Email already registered', 400);
+    }
     sendErrorResponse(res, error.message, 500);
   }
 };

@@ -81,6 +81,7 @@ const Login = () => {
                 icon={<IoMail size={20} />}
                 error={errors.email}
                 required
+                autoComplete="email"
               />
 
               <div className="relative">
@@ -94,6 +95,7 @@ const Login = () => {
                   icon={<IoLockClosed size={20} />}
                   error={errors.password}
                   required
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"

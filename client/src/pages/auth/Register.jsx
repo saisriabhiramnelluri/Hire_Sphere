@@ -105,6 +105,7 @@ const Register = () => {
                 icon={<IoMail size={20} />}
                 error={errors.email}
                 required
+                autoComplete="email"
               />
 
               <Dropdown
@@ -130,6 +131,7 @@ const Register = () => {
                   error={errors.password}
                   helperText="Minimum 6 characters"
                   required
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -151,6 +153,7 @@ const Register = () => {
                   icon={<IoLockClosed size={20} />}
                   error={errors.confirmPassword}
                   required
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"

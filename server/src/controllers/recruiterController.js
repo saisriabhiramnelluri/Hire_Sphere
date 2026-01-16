@@ -32,7 +32,8 @@ export const getProfile = async (req, res) => {
     const recruiter = await Recruiter.findOne({ userId: req.user._id });
 
     if (!recruiter) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      // Return null profile with 200 OK for new recruiters
+      return sendSuccessResponse(res, 'Profile not found - new user', { recruiter: null });
     }
 
     sendSuccessResponse(res, 'Profile fetched successfully', { recruiter });
@@ -135,7 +136,13 @@ export const getMyDrives = async (req, res) => {
     const recruiter = await Recruiter.findOne({ userId: req.user._id });
 
     if (!recruiter) {
-      return sendErrorResponse(res, 'Recruiter profile not found', 404);
+      return sendSuccessResponse(res, 'Profile required for drives', {
+        drives: [],
+        totalPages: 0,
+        currentPage: 1,
+        totalDrives: 0,
+        profileRequired: true
+      });
     }
 
     const { status, page = 1, limit = 10 } = req.query;
@@ -563,7 +570,17 @@ export const getDashboard = async (req, res) => {
     const recruiter = await Recruiter.findOne({ userId: req.user._id });
 
     if (!recruiter) {
-      return sendErrorResponse(res, 'Recruiter profile not found', 404);
+      return sendSuccessResponse(res, 'Dashboard data fetched successfully', {
+        stats: {
+          totalDrives: 0,
+          activeDrives: 0,
+          totalApplications: 0,
+          offersIssued: 0,
+        },
+        recentDrives: [],
+        isApproved: false,
+        isNewUser: true
+      });
     }
 
     const totalDrives = await Drive.countDocuments({ recruiterId: recruiter._id });

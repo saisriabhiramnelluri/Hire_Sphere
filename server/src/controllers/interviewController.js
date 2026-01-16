@@ -109,7 +109,7 @@ export const getRecruiterInterviews = async (req, res) => {
         const recruiter = await Recruiter.findOne({ userId: req.user._id });
 
         if (!recruiter) {
-            return sendErrorResponse(res, 'Recruiter profile not found', 404);
+            return sendSuccessResponse(res, 'Interviews fetched (new user)', { interviews: [] });
         }
 
         const { status } = req.query;
@@ -136,7 +136,7 @@ export const getStudentInterviews = async (req, res) => {
         const student = await Student.findOne({ userId: req.user._id });
 
         if (!student) {
-            return sendErrorResponse(res, 'Student profile not found', 404);
+            return sendSuccessResponse(res, 'Interviews fetched (new user)', { interviews: [] });
         }
 
         const { status } = req.query;

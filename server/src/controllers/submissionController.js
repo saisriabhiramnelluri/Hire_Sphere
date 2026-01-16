@@ -11,7 +11,7 @@ export const getStudentTests = async (req, res) => {
     try {
         const student = await Student.findOne({ userId: req.user._id });
         if (!student) {
-            return sendErrorResponse(res, 'Student profile not found', 404);
+            return sendSuccessResponse(res, 'Tests fetched (new user)', { submissions: [] });
         }
 
         const { status } = req.query;

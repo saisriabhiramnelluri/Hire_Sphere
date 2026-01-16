@@ -34,7 +34,8 @@ export const getProfile = async (req, res) => {
     const student = await Student.findOne({ userId: req.user._id });
 
     if (!student) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      // Return null profile with 200 OK so frontend can handle "create profile" flow without console errors
+      return sendSuccessResponse(res, 'Profile not found - new user', { student: null });
     }
 
     sendSuccessResponse(res, 'Profile fetched successfully', { student });
@@ -169,7 +170,13 @@ export const getEligibleDrives = async (req, res) => {
     const student = await Student.findOne({ userId: req.user._id });
 
     if (!student) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      return sendSuccessResponse(res, 'Profile required for drives', {
+        drives: [],
+        totalPages: 0,
+        currentPage: 1,
+        totalDrives: 0,
+        profileRequired: true
+      });
     }
 
     const { page = 1, limit = 10 } = req.query;
@@ -242,7 +249,13 @@ export const getMyApplications = async (req, res) => {
     const student = await Student.findOne({ userId: req.user._id });
 
     if (!student) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      return sendSuccessResponse(res, 'Profile required for applications', {
+        applications: [],
+        totalPages: 0,
+        currentPage: 1,
+        totalApplications: 0,
+        profileRequired: true
+      });
     }
 
     const { status, page = 1, limit = 10 } = req.query;
@@ -274,7 +287,7 @@ export const getMyOffers = async (req, res) => {
     const student = await Student.findOne({ userId: req.user._id });
 
     if (!student) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      return sendSuccessResponse(res, 'Profile required for offers', { offers: [] });
     }
 
     const offers = await Offer.find({ studentId: student._id, isActive: true })
@@ -292,8 +305,19 @@ export const getDashboard = async (req, res) => {
   try {
     const student = await Student.findOne({ userId: req.user._id });
 
+    // Return empty dashboard data instead of 404 to prevent console errors
     if (!student) {
-      return sendErrorResponse(res, 'Profile not found', 404);
+      return sendSuccessResponse(res, 'Profile not found - new user', {
+        stats: {
+          totalApplications: 0,
+          shortlisted: 0,
+          offered: 0,
+          eligibleDrives: 0,
+        },
+        recentApplications: [],
+        placementStatus: { isPlaced: false },
+        isNewUser: true
+      });
     }
 
     const totalApplications = await Application.countDocuments({ studentId: student._id });

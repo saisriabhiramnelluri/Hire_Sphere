@@ -15,9 +15,7 @@ const app = express();
 const httpServer = createServer(app);
 
 const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.CLIENT_URL,
-  'https://hire-sphere-opal.vercel.app'
+  'http://localhost:5174'
 ].filter(Boolean);
 
 // Socket.IO setup for WebRTC signaling
@@ -25,9 +23,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
       const allowedOrigins = [
-        'http://localhost:5173',
-        process.env.CLIENT_URL,
-        'https://hire-sphere-opal.vercel.app'
+        'http://localhost:5174'
       ];
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
@@ -128,9 +124,7 @@ app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://localhost:5173',
-      process.env.CLIENT_URL,
-      'https://hire-sphere-opal.vercel.app'
+      'http://localhost:5174'
     ];
     // Allow requests with no origin
     if (!origin) return callback(null, true);
@@ -180,4 +174,5 @@ httpServer.listen(PORT, () => {
 });
 
 export default app;
+
 
