@@ -12,10 +12,15 @@ import { startCronJobs } from './src/jobs/emailScheduler.js';
 dotenv.config();
 
 const app = express();
+
+// Trust proxy - required for Render.com and other reverse proxies
+// This fixes the express-rate-limit X-Forwarded-For validation error
+app.set('trust proxy', 1);
+
 const httpServer = createServer(app);
 
 const allowedOrigins = [
-  'http://localhost:5174'
+  'http://localhost:5123'
 ].filter(Boolean);
 
 // Socket.IO setup for WebRTC signaling
@@ -23,7 +28,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
       const allowedOrigins = [
-        'http://localhost:5174'
+        'http://localhost:5123'
       ];
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
@@ -124,7 +129,7 @@ app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://localhost:5174'
+      'http://localhost:5123'
     ];
     // Allow requests with no origin
     if (!origin) return callback(null, true);
